@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SUTD Housing Hub
 
-## Getting Started
+A student-led proof of concept to replace the legacy StarRez housing portal.
 
-First, run the development server:
+Next.js 16 (App Router) on Tailwind v3, with the warm terracotta design system inherited from the Vitality Hub project. All data is mock-only at this stage; Supabase wiring lives behind `lib/supabase` for the next phase.
+
+## Run
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000. The root redirects to `/dashboard`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Routes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/login` marketing-style sign in with magic link UX
+- `/dashboard` alert banner, metrics, quick actions, three-up and two-up summary cards
+- `/payments` invoice table, pay modal with PayNow QR and card placeholder, payment history
+- `/maintenance` ticket list, status timeline, scheduled service treatment
+- `/maintenance/new` category grid, photo upload placeholder
+- `/facilities` and `/facilities/[slug]` calendar grid, side panel booking flow, QR confirmation
+- `/events` and `/events/new` featured event header, RSVP, create flow
+- `/community` channel sidebar, post composer, feed with reactions
+- `/profile` editable about, housing details, notification preferences
 
-## Learn More
+## Design system
 
-To learn more about Next.js, take a look at the following resources:
+Mirrors the Vitality Hub palette and type system, no rounded corners on cards or inputs, terracotta as the only accent, Cormorant Garamond for display and Plus Jakarta Sans for UI.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Mock data
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Files in `lib/data/` drive every screen. Replace with Supabase queries when ready, keeping the same return shapes so components stay untouched.

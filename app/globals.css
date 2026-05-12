@@ -1,26 +1,77 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --font-cormorant: 'Cormorant Garamond', Georgia, serif;
+    --font-jakarta: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-cream text-charcoal font-sans;
+  }
+
+  ::selection {
+    @apply bg-terracotta/20 text-charcoal;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-sand;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-warm-gray/50;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-stone;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .section-label {
+    @apply text-xs font-sans font-medium tracking-widest uppercase text-terracotta;
+  }
+
+  .section-title {
+    @apply font-display text-4xl md:text-5xl lg:text-6xl font-normal leading-tight text-charcoal;
+  }
+
+  .container-wide {
+    @apply max-w-7xl mx-auto px-6 lg:px-12;
+  }
+
+  .container-narrow {
+    @apply max-w-3xl mx-auto px-6 lg:px-8;
+  }
+
+  .card {
+    @apply bg-cream border border-warm-gray/30 p-6 md:p-8 transition-all duration-300;
+  }
+
+  .card-hover {
+    @apply hover:border-warm-gray/60;
+  }
+
+  .input-base {
+    @apply border border-warm-gray/40 bg-warm-white text-charcoal font-sans text-sm px-4 py-3 focus:outline-none focus:border-terracotta transition-colors duration-200 w-full;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
 }
