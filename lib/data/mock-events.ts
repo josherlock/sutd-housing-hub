@@ -12,6 +12,7 @@ export interface CommunityEvent {
   max_attendees?: number
   rsvp_count: number
   cover_tone: 'terracotta' | 'charcoal' | 'sand' | 'sage'
+  cover_image_url: string
   organiser: string
   attendees: { name: string; avatar_tone: 'sand' | 'terracotta' | 'charcoal' }[]
 }
@@ -29,6 +30,7 @@ export const mockEvents: CommunityEvent[] = [
     max_attendees: 80,
     rsvp_count: 42,
     cover_tone: 'terracotta',
+    cover_image_url: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1200&q=80&auto=format&fit=crop',
     organiser: 'Block 57 Residents Committee',
     attendees: [
       { name: 'Alex Tan', avatar_tone: 'terracotta' },
@@ -48,6 +50,7 @@ export const mockEvents: CommunityEvent[] = [
     max_attendees: 30,
     rsvp_count: 18,
     cover_tone: 'sand',
+    cover_image_url: 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=1200&q=80&auto=format&fit=crop',
     organiser: 'Block 57 Residents Committee',
     attendees: [
       { name: 'Alex Tan', avatar_tone: 'terracotta' },
@@ -66,6 +69,7 @@ export const mockEvents: CommunityEvent[] = [
     max_attendees: 20,
     rsvp_count: 14,
     cover_tone: 'sage',
+    cover_image_url: 'https://images.unsplash.com/photo-1551958219-acbc608c6377?w=1200&q=80&auto=format&fit=crop',
     organiser: 'Sports Club',
     attendees: [
       { name: 'Alex Tan', avatar_tone: 'terracotta' },
@@ -84,6 +88,7 @@ export const mockEvents: CommunityEvent[] = [
     max_attendees: 8,
     rsvp_count: 6,
     cover_tone: 'charcoal',
+    cover_image_url: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1200&q=80&auto=format&fit=crop',
     organiser: 'Alex Tan',
     attendees: [
       { name: 'Alex Tan', avatar_tone: 'terracotta' },
@@ -102,6 +107,7 @@ export const mockEvents: CommunityEvent[] = [
     max_attendees: 25,
     rsvp_count: 11,
     cover_tone: 'sand',
+    cover_image_url: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=1200&q=80&auto=format&fit=crop',
     organiser: 'Wellness Club',
     attendees: [
       { name: 'Priya Kumar', avatar_tone: 'sand' },

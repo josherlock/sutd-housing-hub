@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Modal from '@/components/ui/Modal'
 import Avatar from '@/components/ui/Avatar'
 import Button from '@/components/ui/Button'
@@ -14,28 +15,31 @@ interface Props {
   onRsvp: (status: 'going' | 'maybe' | 'not_going') => void
 }
 
-const tones: Record<CommunityEvent['cover_tone'], string> = {
-  terracotta: 'bg-terracotta text-warm-white',
-  charcoal: 'bg-charcoal text-warm-white',
-  sand: 'bg-sand text-charcoal',
-  sage: 'bg-success-bg text-success-text',
-}
-
 export default function EventDetailModal({ event, onClose, rsvpStatus, onRsvp }: Props) {
   if (!event) return null
 
   return (
     <Modal open={!!event} onClose={onClose} size="lg" title={event.title}>
-      <div className={`${tones[event.cover_tone]} -m-6 md:-m-8 mb-6 md:mb-8 px-6 md:px-8 py-8`}>
-        <p className="text-[10px] tracking-widest uppercase opacity-80">
-          {event.category}
-        </p>
-        <p className="font-display text-3xl md:text-4xl mt-1 leading-tight">
-          {formatDate(event.start_time, { weekday: 'long', day: 'numeric', month: 'long' })}
-        </p>
-        <p className="text-sm opacity-80 mt-2">
-          {formatTime(event.start_time)} to {formatTime(event.end_time)}
-        </p>
+      <div className="relative -m-6 md:-m-8 mb-6 md:mb-8 h-56 overflow-hidden">
+        <Image
+          src={event.cover_image_url}
+          alt={event.title}
+          fill
+          sizes="(max-width: 768px) 100vw, 640px"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/85 via-charcoal/40 to-charcoal/10" />
+        <div className="absolute inset-x-0 bottom-0 px-6 md:px-8 py-6 text-warm-white">
+          <p className="text-[10px] tracking-widest uppercase text-terracotta-light">
+            {event.category}
+          </p>
+          <p className="font-display text-3xl md:text-4xl mt-1 leading-tight">
+            {formatDate(event.start_time, { weekday: 'long', day: 'numeric', month: 'long' })}
+          </p>
+          <p className="text-sm text-warm-white/80 mt-2">
+            {formatTime(event.start_time)} to {formatTime(event.end_time)}
+          </p>
+        </div>
       </div>
 
       <div className="space-y-5">

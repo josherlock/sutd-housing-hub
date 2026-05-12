@@ -13,6 +13,7 @@ export interface Facility {
   slot_duration_minutes: number
   available_from: string
   available_to: string
+  image_url: string
 }
 
 export const mockFacilities: Facility[] = [
@@ -29,6 +30,7 @@ export const mockFacilities: Facility[] = [
     slot_duration_minutes: 120,
     available_from: '08:00',
     available_to: '23:00',
+    image_url: 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=1200&q=80&auto=format&fit=crop',
   },
   {
     id: 'f_ish1',
@@ -43,6 +45,7 @@ export const mockFacilities: Facility[] = [
     slot_duration_minutes: 60,
     available_from: '07:00',
     available_to: '23:00',
+    image_url: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=1200&q=80&auto=format&fit=crop',
   },
   {
     id: 'f_ish2',
@@ -57,6 +60,7 @@ export const mockFacilities: Facility[] = [
     slot_duration_minutes: 60,
     available_from: '07:00',
     available_to: '23:00',
+    image_url: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200&q=80&auto=format&fit=crop',
   },
   {
     id: 'f_field',
@@ -71,6 +75,7 @@ export const mockFacilities: Facility[] = [
     slot_duration_minutes: 60,
     available_from: '07:00',
     available_to: '22:00',
+    image_url: 'https://images.unsplash.com/photo-1459865264687-595d652de67e?w=1200&q=80&auto=format&fit=crop',
   },
   {
     id: 'f_squash1',
@@ -85,6 +90,7 @@ export const mockFacilities: Facility[] = [
     slot_duration_minutes: 60,
     available_from: '07:00',
     available_to: '22:00',
+    image_url: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=1200&q=80&auto=format&fit=crop',
   },
   {
     id: 'f_squash2',
@@ -99,6 +105,7 @@ export const mockFacilities: Facility[] = [
     slot_duration_minutes: 60,
     available_from: '07:00',
     available_to: '22:00',
+    image_url: 'https://images.unsplash.com/photo-1591491595792-5be3ec84efb5?w=1200&q=80&auto=format&fit=crop',
   },
   {
     id: 'f_tennis1',
@@ -113,6 +120,7 @@ export const mockFacilities: Facility[] = [
     slot_duration_minutes: 60,
     available_from: '07:00',
     available_to: '22:00',
+    image_url: 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=1200&q=80&auto=format&fit=crop',
   },
   {
     id: 'f_meeting_a',
@@ -127,6 +135,7 @@ export const mockFacilities: Facility[] = [
     slot_duration_minutes: 60,
     available_from: '08:00',
     available_to: '23:00',
+    image_url: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1200&q=80&auto=format&fit=crop',
   },
 ]
 
@@ -142,6 +151,7 @@ export interface Booking {
   attendee_count: number
   equipment_requests?: string[]
   qr_token: string
+  admin_note?: string
 }
 
 export const mockBookings: Booking[] = [

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowRight, MapPin, Users } from 'lucide-react'
 import type { Facility } from '@/lib/data/mock-facilities'
 import { bookingsForFacility } from '@/lib/data/mock-facilities'
@@ -8,13 +9,6 @@ const categoryLabels: Record<Facility['category'], string> = {
   study: 'Study',
   event: 'Event',
   multipurpose: 'Multipurpose',
-}
-
-const tones: Record<Facility['category'], string> = {
-  sports: 'bg-charcoal text-warm-white',
-  study: 'bg-sand text-charcoal',
-  event: 'bg-terracotta text-warm-white',
-  multipurpose: 'bg-terracotta-light/30 text-charcoal',
 }
 
 export default function FacilityCard({ facility }: { facility: Facility }) {
@@ -30,9 +24,16 @@ export default function FacilityCard({ facility }: { facility: Facility }) {
       href={`/facilities/${facility.slug}`}
       className="group flex flex-col bg-warm-white border border-warm-gray/30 hover:border-warm-gray/60 transition-all duration-300"
     >
-      <div className={`h-32 relative flex items-end p-5 ${tones[facility.category]}`}>
-        <FacilityPattern category={facility.category} />
-        <div className="relative">
+      <div className="relative h-44 overflow-hidden">
+        <Image
+          src={facility.image_url}
+          alt={facility.name}
+          fill
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/85 via-charcoal/30 to-charcoal/10" />
+        <div className="absolute inset-x-0 bottom-0 p-5 text-warm-white">
           <span className="text-[10px] tracking-widest uppercase opacity-80">
             {categoryLabels[facility.category]}
           </span>
@@ -73,32 +74,5 @@ export default function FacilityCard({ facility }: { facility: Facility }) {
         </div>
       </div>
     </Link>
-  )
-}
-
-function FacilityPattern({ category }: { category: Facility['category'] }) {
-  if (category === 'sports') {
-    return (
-      <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 200 100" preserveAspectRatio="none">
-        <circle cx="170" cy="20" r="40" fill="none" stroke="currentColor" strokeWidth="0.5" />
-        <line x1="0" y1="50" x2="200" y2="50" stroke="currentColor" strokeWidth="0.5" />
-      </svg>
-    )
-  }
-  if (category === 'multipurpose') {
-    return (
-      <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 200 100" preserveAspectRatio="none">
-        <path d="M0,80 Q50,40 100,60 T200,40" fill="none" stroke="currentColor" strokeWidth="0.5" />
-      </svg>
-    )
-  }
-  return (
-    <svg className="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 200 100" preserveAspectRatio="none">
-      <line x1="0" y1="0" x2="0" y2="100" stroke="currentColor" strokeWidth="0.5" />
-      <line x1="50" y1="0" x2="50" y2="100" stroke="currentColor" strokeWidth="0.5" />
-      <line x1="100" y1="0" x2="100" y2="100" stroke="currentColor" strokeWidth="0.5" />
-      <line x1="150" y1="0" x2="150" y2="100" stroke="currentColor" strokeWidth="0.5" />
-      <line x1="200" y1="0" x2="200" y2="100" stroke="currentColor" strokeWidth="0.5" />
-    </svg>
   )
 }

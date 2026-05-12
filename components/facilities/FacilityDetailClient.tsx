@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import BookingCalendar from './BookingCalendar'
 import BookingPanel from './BookingPanel'
 import SectionLabel from '@/components/ui/SectionLabel'
@@ -36,14 +37,43 @@ export default function FacilityDetailClient({ facility, bookings, myBookings }:
         All facilities
       </Link>
 
-      <header className="grid lg:grid-cols-[2fr_1fr] gap-10 items-end">
-        <div>
-          <SectionLabel>{categoryLabels[facility.category]}</SectionLabel>
-          <h1 className="font-display text-4xl md:text-6xl text-charcoal mt-2 leading-tight">
-            {facility.name}
-          </h1>
-          <p className="text-stone mt-4 max-w-xl leading-relaxed">{facility.description}</p>
-          <div className="mt-5 flex flex-wrap gap-2">
+      <header className="grid lg:grid-cols-[1.4fr_1fr] gap-6 items-stretch">
+        <div className="relative aspect-[16/9] lg:aspect-auto lg:min-h-[360px] overflow-hidden">
+          <Image
+            src={facility.image_url}
+            alt={facility.name}
+            fill
+            priority
+            sizes="(max-width: 1024px) 100vw, 60vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 text-warm-white">
+            <SectionLabel className="text-terracotta-light">
+              {categoryLabels[facility.category]}
+            </SectionLabel>
+            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl mt-2 leading-tight">
+              {facility.name}
+            </h1>
+          </div>
+        </div>
+
+        <div className="bg-sand p-6 md:p-8 flex flex-col gap-5">
+          <p className="text-stone leading-relaxed">{facility.description}</p>
+          <div className="space-y-2.5 text-sm">
+            <p className="flex items-center gap-2 text-charcoal">
+              <MapPin size={14} strokeWidth={1.5} className="text-terracotta" />
+              {facility.location}
+            </p>
+            <p className="flex items-center gap-2 text-charcoal">
+              <Users size={14} strokeWidth={1.5} className="text-terracotta" />
+              Capacity, {facility.capacity}
+            </p>
+            <p className="text-[11px] tracking-wide text-stone">
+              Open {facility.available_from} to {facility.available_to}, daily
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2 pt-2 border-t border-warm-gray/20">
             {facility.amenities.map((a) => (
               <span
                 key={a}
@@ -53,20 +83,6 @@ export default function FacilityDetailClient({ facility, bookings, myBookings }:
               </span>
             ))}
           </div>
-        </div>
-
-        <div className="bg-sand p-6 space-y-3">
-          <p className="flex items-center gap-2 text-sm text-charcoal">
-            <MapPin size={14} strokeWidth={1.5} className="text-terracotta" />
-            {facility.location}
-          </p>
-          <p className="flex items-center gap-2 text-sm text-charcoal">
-            <Users size={14} strokeWidth={1.5} className="text-terracotta" />
-            Capacity, {facility.capacity}
-          </p>
-          <p className="text-[11px] tracking-wide text-stone">
-            Open {facility.available_from} to {facility.available_to}, daily
-          </p>
         </div>
       </header>
 
