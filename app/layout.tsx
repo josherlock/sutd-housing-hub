@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Cormorant_Garamond, Plus_Jakarta_Sans } from 'next/font/google'
+import { Cormorant_Garamond, Saira } from 'next/font/google'
 import './globals.css'
 
 const cormorant = Cormorant_Garamond({
@@ -10,10 +10,11 @@ const cormorant = Cormorant_Garamond({
   display: 'swap',
 })
 
-const jakarta = Plus_Jakarta_Sans({
+// Saira is SUTD's web-safe fallback for Gotham, free on Google Fonts.
+const saira = Saira({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
-  variable: '--font-jakarta',
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-saira',
   display: 'swap',
 })
 
@@ -32,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${jakarta.variable}`}>
+    <html lang="en" className={`${cormorant.variable} ${saira.variable}`}>
       <body className="min-h-screen">{children}</body>
     </html>
   )

@@ -1,222 +1,200 @@
-export type MachineKind = 'washer' | 'dryer'
-export type MachineState =
-  | 'available'
-  | 'in_use'
-  | 'finishing'
-  | 'reserved'
-  | 'out_of_order'
+// Mock backing data for the laundry feature.
+//
+// In production this comes from Supabase (laundry_machines + laundry_sessions
+// tables). The simulator assumes a smart relay sits between each machine and
+// the wall socket. The app activates the relay over a webhook; in this PoC the
+// relay endpoint is mocked in lib/laundry-relay.ts.
+
+export type MachineType = 'washer' | 'dryer'
+
+export type MachineStatus = 'available' | 'running' | 'out_of_order'
+
+export interface LaundryMachine {
+  id: string
+  machine_number: number
+  machine_type: MachineType
+  floor: string
+  block: string
+  status: MachineStatus
+  cycle_ends_at: string | null
+  relay_endpoint: string | null
+  price_sgd: number
+  is_active: boolean
+  fault_note?: string
+  // Demo flag, set on the machine that the logged-in user is currently using.
+  is_mine?: boolean
+  current_session_id?: string
+}
+
+export type CycleTypeId = 'quick' | 'standard' | 'heavy'
 
 export interface CycleType {
-  id: string
+  id: CycleTypeId
   label: string
   minutes: number
   price: number
-  kind: MachineKind
 }
 
 export const cycleTypes: CycleType[] = [
-  { id: 'quick', label: 'Quick wash', minutes: 28, price: 2.5, kind: 'washer' },
-  { id: 'normal', label: 'Normal wash', minutes: 42, price: 3.0, kind: 'washer' },
-  { id: 'heavy', label: 'Heavy wash', minutes: 58, price: 3.5, kind: 'washer' },
-  { id: 'dry-low', label: 'Tumble dry, low', minutes: 35, price: 2.0, kind: 'dryer' },
-  { id: 'dry-med', label: 'Tumble dry, medium', minutes: 45, price: 2.5, kind: 'dryer' },
-  { id: 'dry-high', label: 'Tumble dry, high', minutes: 55, price: 3.0, kind: 'dryer' },
+  { id: 'quick', label: 'Quick wash', minutes: 30, price: 2.0 },
+  { id: 'standard', label: 'Standard', minutes: 45, price: 2.5 },
+  { id: 'heavy', label: 'Heavy duty', minutes: 60, price: 3.0 },
 ]
 
-export interface Machine {
-  id: string
-  room_id: string
-  label: string
-  kind: MachineKind
-  state: MachineState
-  cycle_id?: string
-  started_at?: string
-  duration_minutes?: number
-  reserved_by?: string
-  reserved_for?: string
-  current_user?: string
-  is_mine?: boolean
-  fault_note?: string
+export function getCycleType(id: CycleTypeId): CycleType {
+  return cycleTypes.find((c) => c.id === id) ?? cycleTypes[1]!
 }
 
-export interface LaundryRoom {
-  id: string
-  name: string
-  block: string
-  location: string
-  notes?: string
-}
-
-export const mockRooms: LaundryRoom[] = [
-  { id: 'r_57_l1', name: 'Block 57, Level 1', block: '57', location: 'Ground floor, next to lift lobby' },
-  { id: 'r_55_l1', name: 'Block 55, Level 1', block: '55', location: 'Ground floor' },
-  { id: 'r_53_l1', name: 'Block 53, Level 1', block: '53', location: 'Ground floor' },
-]
-
-const minutesAgo = (m: number) => new Date(Date.now() - m * 60_000).toISOString()
 const minutesAhead = (m: number) => new Date(Date.now() + m * 60_000).toISOString()
 
-export const mockMachines: Machine[] = [
-  // Block 57
-  { id: 'm_57_w1', room_id: 'r_57_l1', label: 'Washer 1', kind: 'washer', state: 'available' },
+// Status mix per the addendum spec:
+// 3 available, 3 running (varying remaining time), 1 running near completion,
+// 1 out of order. 6 washers + 2 dryers across two floors of Block 57.
+export const mockMachines: LaundryMachine[] = [
   {
-    id: 'm_57_w2',
-    room_id: 'r_57_l1',
-    label: 'Washer 2',
-    kind: 'washer',
-    state: 'in_use',
-    cycle_id: 'normal',
-    started_at: minutesAgo(22),
-    duration_minutes: 42,
-    current_user: 'Block 57, Room 408',
+    id: 'lm_01',
+    machine_number: 1,
+    machine_type: 'washer',
+    floor: 'Level 1',
+    block: 'Block 57',
+    status: 'available',
+    cycle_ends_at: null,
+    relay_endpoint: null,
+    price_sgd: 2.5,
+    is_active: true,
   },
   {
-    id: 'm_57_w3',
-    room_id: 'r_57_l1',
-    label: 'Washer 3',
-    kind: 'washer',
-    state: 'in_use',
-    cycle_id: 'heavy',
-    started_at: minutesAgo(55),
-    duration_minutes: 58,
-    current_user: 'Block 57, Room 412',
+    id: 'lm_02',
+    machine_number: 2,
+    machine_type: 'washer',
+    floor: 'Level 1',
+    block: 'Block 57',
+    status: 'running',
+    cycle_ends_at: minutesAhead(32),
+    relay_endpoint: null,
+    price_sgd: 2.5,
+    is_active: true,
+  },
+  {
+    id: 'lm_03',
+    machine_number: 3,
+    machine_type: 'washer',
+    floor: 'Level 1',
+    block: 'Block 57',
+    status: 'running',
+    cycle_ends_at: minutesAhead(8),
+    relay_endpoint: null,
+    price_sgd: 2.5,
+    is_active: true,
     is_mine: true,
+    current_session_id: 'ls_001',
   },
   {
-    id: 'm_57_w4',
-    room_id: 'r_57_l1',
-    label: 'Washer 4',
-    kind: 'washer',
-    state: 'out_of_order',
-    fault_note: 'Drum imbalanced, reported 9 May',
+    id: 'lm_04',
+    machine_number: 4,
+    machine_type: 'washer',
+    floor: 'Level 1',
+    block: 'Block 57',
+    status: 'out_of_order',
+    cycle_ends_at: null,
+    relay_endpoint: null,
+    price_sgd: 2.5,
+    is_active: true,
+    fault_note: 'Drum imbalance, reported 9 May. Vendor en route.',
   },
   {
-    id: 'm_57_w5',
-    room_id: 'r_57_l1',
-    label: 'Washer 5',
-    kind: 'washer',
-    state: 'reserved',
-    reserved_by: 'Priya K.',
-    reserved_for: minutesAhead(18),
-  },
-  { id: 'm_57_w6', room_id: 'r_57_l1', label: 'Washer 6', kind: 'washer', state: 'available' },
-  { id: 'm_57_d1', room_id: 'r_57_l1', label: 'Dryer 1', kind: 'dryer', state: 'available' },
-  {
-    id: 'm_57_d2',
-    room_id: 'r_57_l1',
-    label: 'Dryer 2',
-    kind: 'dryer',
-    state: 'in_use',
-    cycle_id: 'dry-med',
-    started_at: minutesAgo(12),
-    duration_minutes: 45,
-    current_user: 'Block 57, Room 401',
+    id: 'lm_05',
+    machine_number: 5,
+    machine_type: 'dryer',
+    floor: 'Level 1',
+    block: 'Block 57',
+    status: 'available',
+    cycle_ends_at: null,
+    relay_endpoint: null,
+    price_sgd: 2.5,
+    is_active: true,
   },
   {
-    id: 'm_57_d3',
-    room_id: 'r_57_l1',
-    label: 'Dryer 3',
-    kind: 'dryer',
-    state: 'in_use',
-    cycle_id: 'dry-high',
-    started_at: minutesAgo(50),
-    duration_minutes: 55,
-    current_user: 'Block 57, Room 415',
+    id: 'lm_06',
+    machine_number: 6,
+    machine_type: 'washer',
+    floor: 'Level 3',
+    block: 'Block 57',
+    status: 'available',
+    cycle_ends_at: null,
+    relay_endpoint: null,
+    price_sgd: 2.5,
+    is_active: true,
   },
-  { id: 'm_57_d4', room_id: 'r_57_l1', label: 'Dryer 4', kind: 'dryer', state: 'available' },
-
-  // Block 55
-  { id: 'm_55_w1', room_id: 'r_55_l1', label: 'Washer 1', kind: 'washer', state: 'in_use', cycle_id: 'normal', started_at: minutesAgo(10), duration_minutes: 42, current_user: 'Block 55, Room 203' },
-  { id: 'm_55_w2', room_id: 'r_55_l1', label: 'Washer 2', kind: 'washer', state: 'available' },
-  { id: 'm_55_w3', room_id: 'r_55_l1', label: 'Washer 3', kind: 'washer', state: 'available' },
-  { id: 'm_55_w4', room_id: 'r_55_l1', label: 'Washer 4', kind: 'washer', state: 'out_of_order', fault_note: 'Door latch broken' },
-  { id: 'm_55_d1', room_id: 'r_55_l1', label: 'Dryer 1', kind: 'dryer', state: 'in_use', cycle_id: 'dry-low', started_at: minutesAgo(30), duration_minutes: 35, current_user: 'Block 55, Room 207' },
-  { id: 'm_55_d2', room_id: 'r_55_l1', label: 'Dryer 2', kind: 'dryer', state: 'available' },
-  { id: 'm_55_d3', room_id: 'r_55_l1', label: 'Dryer 3', kind: 'dryer', state: 'available' },
-
-  // Block 53
-  { id: 'm_53_w1', room_id: 'r_53_l1', label: 'Washer 1', kind: 'washer', state: 'in_use', cycle_id: 'quick', started_at: minutesAgo(20), duration_minutes: 28, current_user: 'Block 53, Room 115' },
-  { id: 'm_53_w2', room_id: 'r_53_l1', label: 'Washer 2', kind: 'washer', state: 'in_use', cycle_id: 'normal', started_at: minutesAgo(38), duration_minutes: 42, current_user: 'Block 53, Room 108' },
-  { id: 'm_53_w3', room_id: 'r_53_l1', label: 'Washer 3', kind: 'washer', state: 'available' },
-  { id: 'm_53_d1', room_id: 'r_53_l1', label: 'Dryer 1', kind: 'dryer', state: 'available' },
-  { id: 'm_53_d2', room_id: 'r_53_l1', label: 'Dryer 2', kind: 'dryer', state: 'in_use', cycle_id: 'dry-med', started_at: minutesAgo(40), duration_minutes: 45, current_user: 'Block 53, Room 112' },
+  {
+    id: 'lm_07',
+    machine_number: 7,
+    machine_type: 'washer',
+    floor: 'Level 3',
+    block: 'Block 57',
+    status: 'running',
+    cycle_ends_at: minutesAhead(19),
+    relay_endpoint: null,
+    price_sgd: 2.5,
+    is_active: true,
+  },
+  {
+    id: 'lm_08',
+    machine_number: 8,
+    machine_type: 'dryer',
+    floor: 'Level 3',
+    block: 'Block 57',
+    status: 'available',
+    cycle_ends_at: null,
+    relay_endpoint: null,
+    price_sgd: 2.5,
+    is_active: true,
+  },
 ]
 
-export interface LaundryReservation {
+export interface LaundrySession {
   id: string
+  user_id: string
   machine_id: string
-  machine_label: string
-  room_id: string
-  room_name: string
-  start_time: string
-  cycle_id: string
-  status: 'pending' | 'active' | 'done' | 'cancelled'
+  paid_at: string
+  activated_at: string | null
+  cycle_duration_minutes: number
+  cycle_ends_at: string | null
+  amount_paid: number
+  payment_ref: string
+  status: 'paid' | 'active' | 'completed' | 'abandoned'
 }
 
-export const mockReservations: LaundryReservation[] = [
-  {
-    id: 'lr_001',
-    machine_id: 'm_57_w1',
-    machine_label: 'Washer 1',
-    room_id: 'r_57_l1',
-    room_name: 'Block 57, Level 1',
-    start_time: minutesAhead(45),
-    cycle_id: 'normal',
-    status: 'pending',
-  },
-]
-
-export interface WalletTransaction {
-  id: string
-  kind: 'topup' | 'spend' | 'refund'
-  amount: number
-  description: string
-  method?: 'paynow' | 'paylah' | 'card'
-  at: string
+export const mockMyActiveSession: LaundrySession | null = {
+  id: 'ls_001',
+  user_id: 'u_001',
+  machine_id: 'lm_03',
+  paid_at: minutesAhead(-22),
+  activated_at: minutesAhead(-22),
+  cycle_duration_minutes: 30,
+  cycle_ends_at: minutesAhead(8),
+  amount_paid: 2.0,
+  payment_ref: 'paynow_demo_001',
+  status: 'active',
 }
 
-export interface Wallet {
-  balance: number
-  auto_topup: boolean
-  transactions: WalletTransaction[]
+// Simple in-app balance. Tops up via PayNow.
+export const mockBalance = {
+  current: 12.5,
 }
 
-export const mockWallet: Wallet = {
-  balance: 18.5,
-  auto_topup: false,
-  transactions: [
-    { id: 't_005', kind: 'spend', amount: -3.5, description: 'Heavy wash, Block 57 Washer 3', at: minutesAgo(55) },
-    { id: 't_004', kind: 'spend', amount: -2.5, description: 'Tumble dry, Block 57 Dryer 2', at: minutesAgo(60 * 24 * 2) },
-    { id: 't_003', kind: 'topup', amount: 20, description: 'Top up via PayNow', method: 'paynow', at: minutesAgo(60 * 24 * 2) },
-    { id: 't_002', kind: 'spend', amount: -3.0, description: 'Normal wash, Block 57 Washer 2', at: minutesAgo(60 * 24 * 5) },
-    { id: 't_001', kind: 'spend', amount: -2.0, description: 'Tumble dry, Block 57 Dryer 1', at: minutesAgo(60 * 24 * 5) },
-  ],
+export function machinesByFloor(): { floor: string; machines: LaundryMachine[] }[] {
+  const floors = Array.from(new Set(mockMachines.map((m) => m.floor)))
+  return floors.map((floor) => ({
+    floor,
+    machines: mockMachines.filter((m) => m.floor === floor),
+  }))
 }
 
-export function machinesInRoom(roomId: string) {
-  return mockMachines.filter((m) => m.room_id === roomId)
+export function freeCount(): number {
+  return mockMachines.filter((m) => m.status === 'available').length
 }
 
-export function freeCountAcrossAllRooms() {
-  return mockMachines.filter((m) => m.state === 'available').length
-}
-
-export function totalMachineCount() {
-  return mockMachines.length
-}
-
-export function nextFreeIn(roomId: string): number | null {
-  const machines = machinesInRoom(roomId)
-  const running = machines.filter((m) => m.state === 'in_use' && m.started_at && m.duration_minutes)
-  if (machines.some((m) => m.state === 'available')) return 0
-  if (running.length === 0) return null
-  const remainings = running.map((m) => {
-    const elapsed = (Date.now() - new Date(m.started_at!).getTime()) / 60_000
-    return Math.max(0, m.duration_minutes! - elapsed)
-  })
-  return Math.min(...remainings)
-}
-
-export function getCycleType(id?: string) {
-  return cycleTypes.find((c) => c.id === id)
+export function totalCount(): number {
+  return mockMachines.filter((m) => m.is_active).length
 }

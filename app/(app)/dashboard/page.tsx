@@ -103,7 +103,7 @@ export default function DashboardPage() {
 
         <div className="space-y-4">
           <SectionLabel>Laundry</SectionLabel>
-          <LaundryPulse block={mockUser.block} />
+          <LaundryPulse />
         </div>
 
         <div className="space-y-4">
