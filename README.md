@@ -2,13 +2,15 @@
 
 A student-led proof of concept to replace the legacy StarRez housing portal.
 
-Next.js 16 (App Router) on Tailwind v3, with the warm terracotta design system inherited from the Vitality Hub project. All data is mock-only at this stage; Supabase wiring lives behind `lib/supabase` for the next phase.
+Next.js 16 (App Router) on Tailwind v3, with the warm terracotta design system inherited from the Vitality Hub project. Supabase wiring lives in `lib/supabase`; maintenance tickets are the first feature reading from the database, everything else is still mock data.
 
 ## Run
 
 ```bash
 npm run dev
 ```
+
+To connect Supabase, copy `.env.example` to `.env.local`, fill in your project URL and anon/publishable key, and run `supabase/migrations/0001_maintenance_tickets.sql` in the Supabase SQL Editor. Without env vars the app falls back to mock data.
 
 Open http://localhost:3000. The root redirects to `/dashboard`.
 
@@ -28,6 +30,6 @@ Open http://localhost:3000. The root redirects to `/dashboard`.
 
 Mirrors the Vitality Hub palette and type system, no rounded corners on cards or inputs, terracotta as the only accent, Cormorant Garamond for display and Plus Jakarta Sans for UI.
 
-## Mock data
+## Data
 
-Files in `lib/data/` drive every screen. Replace with Supabase queries when ready, keeping the same return shapes so components stay untouched.
+Maintenance tickets load from Supabase via `lib/supabase/queries/maintenance.ts` (server-side, App Router). Files in `lib/data/` still drive every other screen; replace them with Supabase queries when ready, keeping the same return shapes so components stay untouched.

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import StatusPill from '@/components/ui/StatusPill'
+import { useNow } from '@/lib/hooks/use-now'
 import { mockAdminBookings, bookingCounts } from '@/lib/data/admin/mock-admin-bookings'
 import { mockFacilities } from '@/lib/data/mock-facilities'
 import { studentLookup } from '@/lib/data/admin/mock-students'
@@ -9,7 +10,9 @@ import { formatDate, formatTime } from '@/lib/utils'
 import { Filter, X, QrCode, ExternalLink } from 'lucide-react'
 import type { Booking } from '@/lib/data/mock-facilities'
 
-const statusOptions: { value: Booking['status'] | 'all' | 'upcoming'; label: string }[] = [
+type StatusFilter = Booking['status'] | 'all' | 'upcoming'
+
+const statusOptions: { value: StatusFilter; label: string }[] = [
   { value: 'upcoming', label: 'Upcoming' },
   { value: 'all', label: 'All' },
   { value: 'pending', label: 'Pending' },
@@ -21,20 +24,22 @@ const statusOptions: { value: Booking['status'] | 'all' | 'upcoming'; label: str
 ]
 
 export default function AdminBookings() {
-  const [status, setStatus] = useState<Booking['status'] | 'all' | 'upcoming'>('upcoming')
+  const [status, setStatus] = useState<StatusFilter>('upcoming')
   const [facility, setFacility] = useState<string>('all')
+  // null during SSR/hydration; treat everything as upcoming until it resolves.
+  const now = useNow()
 
   const filtered = useMemo(() => {
-    const now = Date.now()
+    const nowMs = now?.getTime() ?? 0
     return mockAdminBookings
       .filter((b) => {
-        if (status === 'upcoming') return new Date(b.start_time).getTime() > now
+        if (status === 'upcoming') return new Date(b.start_time).getTime() > nowMs
         if (status !== 'all' && b.status !== status) return false
         return true
       })
       .filter((b) => (facility === 'all' ? true : b.facility_id === facility))
       .sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime())
-  }, [status, facility])
+  }, [status, facility, now])
 
   return (
     <div className="p-6 lg:p-10 space-y-6">
@@ -54,7 +59,7 @@ export default function AdminBookings() {
           <Filter size={13} strokeWidth={1.5} />
           <span className="text-[10px] tracking-widest uppercase">Filter</span>
         </div>
-        <FilterSelect label="Status" value={status} options={statusOptions} onChange={(v) => setStatus(v as any)} />
+        <FilterSelect label="Status" value={status} options={statusOptions} onChange={(v) => setStatus(v as StatusFilter)} />
         <FilterSelect
           label="Facility"
           value={facility}

@@ -183,7 +183,7 @@ export function suggestedEvents(interestLabels: string[]): CommunityEvent[] {
 }
 
 export function interestsByCategory(): { category: InterestCategory; tags: InterestTag[] }[] {
-  const byCat: Record<InterestCategory, InterestTag[]> = {} as any
+  const byCat = {} as Record<InterestCategory, InterestTag[]>
   for (const i of allInterests) {
     ;(byCat[i.category] ??= []).push(i)
   }

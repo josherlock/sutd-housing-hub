@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useMemo } from 'react'
 import { suggestedOrgs, suggestedEvents } from '@/lib/data/interests'
 import { ArrowRight, Compass, Sparkles, Send, MapPin } from 'lucide-react'
-import { formatDate, formatTime } from '@/lib/utils'
+import { formatTime } from '@/lib/utils'
 
 export default function SuggestionsPanel({ interests }: { interests: string[] }) {
   const orgs = useMemo(() => suggestedOrgs(interests), [interests])

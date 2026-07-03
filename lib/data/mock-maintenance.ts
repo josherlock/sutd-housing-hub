@@ -1,34 +1,8 @@
-export type TicketCategory =
-  | 'aircon'
-  | 'electrical'
-  | 'plumbing'
-  | 'furniture'
-  | 'internet'
-  | 'pest'
-  | 'other'
+import type { MaintenanceTicket } from '@/lib/types/maintenance'
 
-export type TicketStatus =
-  | 'submitted'
-  | 'assigned'
-  | 'in_progress'
-  | 'resolved'
-  | 'cancelled'
-
-export interface MaintenanceTicket {
-  id: string
-  category: TicketCategory
-  title: string
-  description: string
-  status: TicketStatus
-  scheduled_at?: string
-  technician_name?: string
-  rating?: number
-  rating_comment?: string
-  is_scheduled_service?: boolean
-  created_at: string
-  updated_at: string
-  timeline: { stage: TicketStatus; at: string; note?: string }[]
-}
+// Canonical types now live in lib/types/maintenance so Supabase code can use
+// them without importing mock data. Re-exported here for existing imports.
+export type { MaintenanceTicket, TicketCategory, TicketStatus } from '@/lib/types/maintenance'
 
 export const mockTickets: MaintenanceTicket[] = [
   {
@@ -81,7 +55,3 @@ export const mockTickets: MaintenanceTicket[] = [
     ],
   },
 ]
-
-export function getOpenTicketCount() {
-  return mockTickets.filter((t) => t.status !== 'resolved' && t.status !== 'cancelled').length
-}

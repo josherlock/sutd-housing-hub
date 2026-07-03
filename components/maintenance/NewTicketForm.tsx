@@ -6,7 +6,8 @@ import Input, { Textarea } from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 import SectionLabel from '@/components/ui/SectionLabel'
 import { categoryIcons, categoryLabels } from './categoryIcons'
-import type { TicketCategory } from '@/lib/data/mock-maintenance'
+import type { TicketCategory } from '@/lib/types/maintenance'
+import { createMaintenanceTicket } from '@/lib/actions/maintenance'
 import { Camera, ArrowLeft, Check } from 'lucide-react'
 import { motion } from 'framer-motion'
 
@@ -19,16 +20,23 @@ export default function NewTicketForm() {
   const [description, setDescription] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!category) return
+    setError(null)
     setSubmitting(true)
-    setTimeout(() => {
-      setSubmitting(false)
-      setDone(true)
-      setTimeout(() => router.push('/maintenance'), 1100)
-    }, 700)
+
+    const result = await createMaintenanceTicket({ category, title, description })
+
+    setSubmitting(false)
+    if (!result.ok) {
+      setError(result.error ?? 'Something went wrong. Try again.')
+      return
+    }
+    setDone(true)
+    setTimeout(() => router.push('/maintenance'), 1100)
   }
 
   if (done) {
@@ -121,6 +129,12 @@ export default function NewTicketForm() {
             <input type="file" accept="image/*" className="hidden" />
           </label>
         </div>
+
+        {error && (
+          <p className="text-sm text-terracotta-dark" role="alert">
+            {error}
+          </p>
+        )}
 
         <div className="flex justify-end gap-3 pt-2">
           <Button variant="ghost" onClick={() => router.back()}>

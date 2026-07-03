@@ -6,7 +6,7 @@ import EventsHero from '@/components/dashboard/EventsHero'
 import SectionLabel from '@/components/ui/SectionLabel'
 import StatusPill from '@/components/ui/StatusPill'
 import { mockUser } from '@/lib/data/mock-user'
-import { getOpenTicketCount } from '@/lib/data/mock-maintenance'
+import { getOpenTicketCount } from '@/lib/supabase/queries/maintenance'
 import { getUpcomingBookings } from '@/lib/data/mock-facilities'
 import { getUpcomingEvents } from '@/lib/data/mock-events'
 import { getOutstandingTotal, getNextDue } from '@/lib/data/mock-payments'
@@ -14,10 +14,10 @@ import { mockChats } from '@/lib/data/mock-chats'
 import { formatCurrency, formatDate, formatTime } from '@/lib/utils'
 import { ArrowRight, Send, Wallet, Wrench, CalendarClock } from 'lucide-react'
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
   const outstanding = getOutstandingTotal()
   const nextDue = getNextDue()
-  const openTickets = getOpenTicketCount()
+  const openTickets = await getOpenTicketCount()
   const nextBooking = getUpcomingBookings(1)[0]
   const upcomingEvents = getUpcomingEvents(4)
   const pinnedChats = mockChats.filter((c) => c.pinned || c.unread > 0).slice(0, 3)

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
@@ -27,7 +27,13 @@ export default function LaundryModal({ open, machine, balance, onClose, onActiva
   const [activating, setActivating] = useState(false)
   const [activated, setActivated] = useState(false)
 
-  useEffect(() => {
+  // Reset the flow whenever the modal opens or switches machine. Render-phase
+  // state adjustment instead of an effect, per React's "adjusting state when
+  // a prop changes" pattern.
+  const machineId = machine?.id ?? null
+  const [prev, setPrev] = useState({ open, machineId })
+  if (prev.open !== open || prev.machineId !== machineId) {
+    setPrev({ open, machineId })
     if (open) {
       setStep(1)
       setCycleId('standard')
@@ -35,7 +41,7 @@ export default function LaundryModal({ open, machine, balance, onClose, onActiva
       setActivating(false)
       setActivated(false)
     }
-  }, [open, machine?.id])
+  }
 
   const cycle = cycleTypes.find((c) => c.id === cycleId) ?? cycleTypes[1]!
   const insufficient = method === 'balance' && balance < cycle.price

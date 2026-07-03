@@ -2,25 +2,50 @@
 
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import { createClient } from '@/lib/supabase/client'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+
+// Direct env access so Next.js can inline the value into the client bundle.
+const supabaseConfigured = Boolean(
+  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+)
 
 export default function LoginPage() {
   const router = useRouter()
   const [email, setEmail] = useState('joshua_loo@mymail.sutd.edu.sg')
   const [sent, setSent] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
+    setError(null)
     setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
-      setSent(true)
-      setTimeout(() => router.push('/dashboard'), 900)
-    }, 600)
+
+    // Demo mode until Supabase env vars are configured.
+    if (!supabaseConfigured) {
+      setTimeout(() => {
+        setLoading(false)
+        setSent(true)
+        setTimeout(() => router.push('/dashboard'), 900)
+      }, 600)
+      return
+    }
+
+    const supabase = createClient()
+    const { error: otpError } = await supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+    })
+    setLoading(false)
+    if (otpError) {
+      setError(otpError.message)
+      return
+    }
+    setSent(true)
   }
 
   return (
@@ -87,9 +112,21 @@ export default function LoginPage() {
             />
 
             <Button type="submit" fullWidth size="lg" disabled={loading || sent}>
-              {sent ? 'Magic link sent, redirecting' : loading ? 'Sending' : 'Send magic link'}
+              {sent
+                ? supabaseConfigured
+                  ? 'Magic link sent, check your email'
+                  : 'Magic link sent, redirecting'
+                : loading
+                  ? 'Sending'
+                  : 'Send magic link'}
               {!loading && !sent && <ArrowRight size={16} strokeWidth={1.5} />}
             </Button>
+
+            {error && (
+              <p className="text-sm text-terracotta-dark" role="alert">
+                Could not send the link: {error}
+              </p>
+            )}
           </form>
 
           <div className="my-10 flex items-center gap-4">

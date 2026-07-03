@@ -9,7 +9,7 @@ import SectionLabel from '@/components/ui/SectionLabel'
 import StatusPill from '@/components/ui/StatusPill'
 import { ArrowLeft, MapPin, Users } from 'lucide-react'
 import { type Facility, type Booking } from '@/lib/data/mock-facilities'
-import { formatDate, formatTime } from '@/lib/utils'
+import { formatTime } from '@/lib/utils'
 
 interface Props {
   facility: Facility

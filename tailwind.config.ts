@@ -21,12 +21,12 @@ const config: Config = {
         'warning-bg': '#FFF6E0',
         'success-bg': '#E8F0E5',
         'success-text': '#4A6B3A',
-        // SUTD reds. Token names kept as "terracotta" so existing components do
-        // not need to change. These are SUTD's actual brand reds pulled from
-        // their stylesheet.
-        terracotta: '#DA0034',
-        'terracotta-dark': '#B60034',
-        'terracotta-light': '#E30000',
+        // Softened from SUTD's pure brand reds (#DA0034 family), which read as
+        // harsh against the cream canvas. This muted clay stays warm and
+        // SUTD-adjacent; swap these three values to go back to strict brand red.
+        terracotta: '#C05B4D',
+        'terracotta-dark': '#A64A3E',
+        'terracotta-light': '#D07B62',
         // SUTD secondary, used sparingly for "Official" badges and admin chrome.
         'sutd-navy': '#214975',
         'sutd-navy-dark': '#16335A',
@@ -34,7 +34,7 @@ const config: Config = {
       },
       fontFamily: {
         display: ['var(--font-cormorant)', 'Georgia', 'serif'],
-        sans: ['var(--font-saira)', 'Saira', 'Tahoma', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-jakarta)', 'Plus Jakarta Sans', 'Tahoma', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         '8xl': ['6rem', { lineHeight: '1.05' }],

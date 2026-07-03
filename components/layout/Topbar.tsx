@@ -2,19 +2,12 @@
 
 import { Bell } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
 import { mockUser } from '@/lib/data/mock-user'
 import { greeting, formatDate } from '@/lib/utils'
+import { useNow } from '@/lib/hooks/use-now'
 
 export default function Topbar() {
-  const [now, setNow] = useState<Date | null>(null)
-
-  useEffect(() => {
-    setNow(new Date())
-    const id = setInterval(() => setNow(new Date()), 60_000)
-    return () => clearInterval(id)
-  }, [])
-
+  const now = useNow()
   const firstName = mockUser.full_name.split(' ')[0]
 
   return (

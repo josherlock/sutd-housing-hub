@@ -79,15 +79,22 @@ export default function CycleTimer({ cycleEndsAt, size = 'lg', tone = 'light', o
   )
 }
 
+// Deterministic scatter in [0, 1) so render stays pure; looks random enough
+// for confetti and renders identically on server and client.
+function scatter(seed: number) {
+  const x = Math.sin(seed * 127.1 + 311.7) * 43758.5453
+  return x - Math.floor(x)
+}
+
 function Confetti() {
   const pieces = useMemo(
     () =>
       Array.from({ length: 18 }).map((_, i) => ({
         id: i,
-        x: Math.random() * 200 - 100,
-        delay: Math.random() * 0.6,
-        rotate: Math.random() * 360,
-        colour: ['#DA0034', '#214975', '#E17400', '#FFD100', '#26C65A'][i % 5]!,
+        x: scatter(i) * 200 - 100,
+        delay: scatter(i + 20) * 0.6,
+        rotate: scatter(i + 40) * 360,
+        colour: ['#C05B4D', '#214975', '#E17400', '#FFD100', '#26C65A'][i % 5]!,
       })),
     [],
   )

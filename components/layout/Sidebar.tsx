@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { mockUser } from '@/lib/data/mock-user'
-import { getOpenTicketCount } from '@/lib/data/mock-maintenance'
 import { getTotalUnread } from '@/lib/data/mock-chats'
 import { cn, initials } from '@/lib/utils'
 import {
@@ -28,9 +27,10 @@ interface NavItem {
   badge?: number
 }
 
-export default function Sidebar() {
+// openTickets comes from the server layout so this client component stays
+// free of data fetching.
+export default function Sidebar({ openTickets }: { openTickets: number }) {
   const pathname = usePathname()
-  const openTickets = getOpenTicketCount()
   const unreadChats = getTotalUnread()
 
   const main: NavItem[] = [

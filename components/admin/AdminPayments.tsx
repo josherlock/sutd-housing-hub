@@ -97,7 +97,7 @@ export default function AdminPayments() {
           <Filter size={13} strokeWidth={1.5} />
           <span className="text-[10px] tracking-widest uppercase">Filter</span>
         </div>
-        <FilterSelect label="Status" value={status} options={statusOptions} onChange={(v) => setStatus(v as any)} />
+        <FilterSelect label="Status" value={status} options={statusOptions} onChange={(v) => setStatus(v as InvoiceStatus | 'all')} />
         <FilterSelect
           label="Block"
           value={block}

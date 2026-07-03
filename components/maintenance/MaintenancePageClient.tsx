@@ -1,13 +1,12 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import Link from 'next/link'
 import Button from '@/components/ui/Button'
 import StatusPill from '@/components/ui/StatusPill'
 import SectionLabel from '@/components/ui/SectionLabel'
 import IconTile from '@/components/ui/IconTile'
 import { categoryIcons, categoryLabels } from './categoryIcons'
-import { mockTickets, type MaintenanceTicket, type TicketStatus } from '@/lib/data/mock-maintenance'
+import type { MaintenanceTicket, TicketStatus } from '@/lib/types/maintenance'
 import { formatDate, formatDateTime } from '@/lib/utils'
 import { Plus, Star, CalendarClock, CheckCircle2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -22,17 +21,17 @@ const filters: { value: Filter; label: string }[] = [
   { value: 'scheduled', label: 'Scheduled' },
 ]
 
-export default function MaintenancePageClient() {
+export default function MaintenancePageClient({ tickets }: { tickets: MaintenanceTicket[] }) {
   const [filter, setFilter] = useState<Filter>('all')
-  const [selectedId, setSelectedId] = useState<string>(mockTickets[0]?.id ?? '')
+  const [selectedId, setSelectedId] = useState<string>(tickets[0]?.id ?? '')
 
-  const tickets = useMemo(() => {
-    if (filter === 'all') return mockTickets
-    if (filter === 'scheduled') return mockTickets.filter((t) => t.is_scheduled_service)
-    return mockTickets.filter((t) => t.status === filter)
-  }, [filter])
+  const filtered = useMemo(() => {
+    if (filter === 'all') return tickets
+    if (filter === 'scheduled') return tickets.filter((t) => t.is_scheduled_service)
+    return tickets.filter((t) => t.status === filter)
+  }, [tickets, filter])
 
-  const selected = mockTickets.find((t) => t.id === selectedId) ?? tickets[0]
+  const selected = tickets.find((t) => t.id === selectedId) ?? filtered[0]
 
   return (
     <div className="container-wide py-8 md:py-12">
@@ -72,12 +71,12 @@ export default function MaintenancePageClient() {
           </div>
 
           <div className="space-y-3">
-            {tickets.length === 0 && (
+            {filtered.length === 0 && (
               <div className="bg-sand/50 border border-warm-gray/20 p-8 text-center text-sm text-stone">
                 Nothing here.
               </div>
             )}
-            {tickets.map((t) => (
+            {filtered.map((t) => (
               <TicketRow
                 key={t.id}
                 ticket={t}
@@ -170,7 +169,7 @@ function TicketDetail({ ticket }: { ticket: MaintenanceTicket }) {
             {ticket.title}
           </h2>
           <p className="text-[11px] text-stone tracking-wide uppercase mt-1">
-            Ticket {ticket.id.toUpperCase()} · Opened {formatDate(ticket.created_at)}
+            Ticket {(ticket.code ?? ticket.id).toUpperCase()} · Opened {formatDate(ticket.created_at)}
           </p>
         </div>
       </div>

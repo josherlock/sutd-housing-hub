@@ -68,7 +68,7 @@ export default function AdminMaintenance() {
           <Filter size={13} strokeWidth={1.5} />
           <span className="text-[10px] tracking-widest uppercase">Filter</span>
         </div>
-        <FilterGroup label="Status" value={statusFilter} options={statusFilters} onChange={(v) => setStatusFilter(v as any)} />
+        <FilterGroup label="Status" value={statusFilter} options={statusFilters} onChange={(v) => setStatusFilter(v as TicketStatus | 'all')} />
         <FilterGroup
           label="Priority"
           value={priorityFilter}
@@ -79,7 +79,7 @@ export default function AdminMaintenance() {
             { value: 'normal', label: 'Normal' },
             { value: 'low', label: 'Low' },
           ]}
-          onChange={(v) => setPriorityFilter(v as any)}
+          onChange={(v) => setPriorityFilter(v as Priority | 'all')}
         />
         <FilterGroup
           label="Block"

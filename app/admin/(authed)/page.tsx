@@ -4,7 +4,7 @@ import StatTile from '@/components/admin/StatTile'
 import StatusPill from '@/components/ui/StatusPill'
 import { mockAdminTickets, ticketCounts } from '@/lib/data/admin/mock-admin-tickets'
 import { mockAdminBookings, bookingCounts } from '@/lib/data/admin/mock-admin-bookings'
-import { mockAdminInvoices, invoiceTotals } from '@/lib/data/admin/mock-admin-invoices'
+import { mockAdminInvoices } from '@/lib/data/admin/mock-admin-invoices'
 import { mockStudents, studentLookup } from '@/lib/data/admin/mock-students'
 import { formatCurrency, formatDate, formatTime } from '@/lib/utils'
 import {

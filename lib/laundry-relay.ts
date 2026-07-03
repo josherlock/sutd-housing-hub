@@ -22,7 +22,7 @@ export async function activateMachine(machineId: string): Promise<RelayResult> {
   await new Promise((resolve) => setTimeout(resolve, ACTIVATE_DELAY_MS))
   if (typeof window !== 'undefined') {
     // Surface activations in the console so the demo feels real.
-    // eslint-disable-next-line no-console
+     
     console.log(`[mock relay] activated machine ${machineId}`)
   }
   return {
@@ -36,7 +36,7 @@ export async function activateMachine(machineId: string): Promise<RelayResult> {
 export async function deactivateMachine(machineId: string): Promise<RelayResult> {
   await new Promise((resolve) => setTimeout(resolve, DEACTIVATE_DELAY_MS))
   if (typeof window !== 'undefined') {
-    // eslint-disable-next-line no-console
+     
     console.log(`[mock relay] deactivated machine ${machineId}`)
   }
   return {
