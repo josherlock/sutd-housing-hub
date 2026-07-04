@@ -6,6 +6,7 @@ import { freeCount, totalCount } from '@/lib/data/mock-laundry'
 import { termLabel, ambientLine } from '@/lib/campus'
 import { greeting, formatDate, initials } from '@/lib/utils'
 import { useNow } from '@/lib/hooks/use-now'
+import { useProfile } from '@/lib/hooks/use-profile'
 import { ArrowUpRight } from 'lucide-react'
 
 interface DashboardHeroProps {
@@ -18,6 +19,8 @@ interface DashboardHeroProps {
 // person, the point in the term, and what is worth their attention today.
 export default function DashboardHero({ openTickets, nextBooking, nextEvent }: DashboardHeroProps) {
   const now = useNow()
+  // Profile edits (name, interests) made on /profile show up here immediately.
+  const { profile } = useProfile()
 
   const line = now
     ? ambientLine({
@@ -42,7 +45,7 @@ export default function DashboardHero({ openTickets, nextBooking, nextEvent }: D
           {now ? `${formatDate(now, { weekday: 'long', day: 'numeric', month: 'long' })} · ${termLabel(now)}` : 'SUTD Housing Hub'}
         </p>
         <h1 className="font-display text-5xl md:text-6xl text-charcoal mt-3 leading-[1.05]">
-          {now ? greeting(now) : 'Welcome back'}, {mockUser.display_name}.
+          {now ? greeting(now) : 'Welcome back'}, {profile.display_name}.
         </h1>
         <p className="font-display italic text-xl md:text-2xl text-stone mt-4 leading-snug">
           {line}
@@ -65,7 +68,7 @@ export default function DashboardHero({ openTickets, nextBooking, nextEvent }: D
             Resident since {residentSince}
           </p>
           <div className="flex flex-wrap gap-1.5 mt-2.5">
-            {mockUser.interests.slice(0, 3).map((interest) => (
+            {profile.interests.slice(0, 3).map((interest) => (
               <span
                 key={interest}
                 className="text-[10px] tracking-wide uppercase text-stone bg-sand px-2 py-0.5"
