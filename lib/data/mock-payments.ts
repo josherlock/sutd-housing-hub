@@ -19,7 +19,7 @@ export const mockInvoices: Invoice[] = [
     period: 'May 2026 to Aug 2026',
     amount: 1850,
     tax: 0,
-    due_date: '2026-05-25',
+    due_date: '2026-07-25',
     status: 'unpaid',
   },
   {
@@ -28,7 +28,7 @@ export const mockInvoices: Invoice[] = [
     period: 'May 2026',
     amount: 35,
     tax: 0,
-    due_date: '2026-05-08',
+    due_date: '2026-07-08',
     status: 'overdue',
   },
   {

@@ -3,6 +3,8 @@ import AlertBanner from '@/components/dashboard/AlertBanner'
 import QuickActions from '@/components/dashboard/QuickActions'
 import LaundryPulse from '@/components/dashboard/LaundryPulse'
 import EventsHero from '@/components/dashboard/EventsHero'
+import DashboardHero from '@/components/dashboard/DashboardHero'
+import CustomizableDashboard from '@/components/dashboard/CustomizableDashboard'
 import SectionLabel from '@/components/ui/SectionLabel'
 import StatusPill from '@/components/ui/StatusPill'
 import { mockUser } from '@/lib/data/mock-user'
@@ -20,20 +22,11 @@ export default async function DashboardPage() {
   const openTickets = await getOpenTicketCount()
   const nextBooking = getUpcomingBookings(1)[0]
   const upcomingEvents = getUpcomingEvents(4)
+  const nextEvent = upcomingEvents[0]
   const pinnedChats = mockChats.filter((c) => c.pinned || c.unread > 0).slice(0, 3)
 
-  return (
-    <div className="container-wide py-8 md:py-12 space-y-10">
-      <AlertBanner
-        title="Bimonthly aircon servicing due"
-        body={`Block ${mockUser.block} servicing runs 18 to 22 May. Pick your preferred slot before Thursday.`}
-        ctaLabel="Pick a slot"
-        ctaHref="/maintenance/new"
-      />
-
-      <EventsHero events={upcomingEvents} />
-
-      <section className="grid lg:grid-cols-3 gap-3">
+  const statsSection = (
+    <section className="grid lg:grid-cols-3 gap-3">
         <SummaryStat
           label="Balance"
           value={outstanding > 0 ? formatCurrency(outstanding) : 'All clear'}
@@ -59,13 +52,17 @@ export default async function DashboardPage() {
           icon={CalendarClock}
         />
       </section>
+  )
 
-      <section className="space-y-4">
-        <SectionLabel>Quick actions</SectionLabel>
-        <QuickActions />
-      </section>
+  const actionsSection = (
+    <section className="space-y-4">
+      <SectionLabel>Quick actions</SectionLabel>
+      <QuickActions />
+    </section>
+  )
 
-      <section className="grid lg:grid-cols-[1fr_1fr_1fr] gap-5">
+  const todaySection = (
+    <section className="grid lg:grid-cols-[1fr_1fr_1fr] gap-5">
         <div className="space-y-4">
           <SectionLabel>Your day</SectionLabel>
           {nextBooking ? (
@@ -153,6 +150,45 @@ export default async function DashboardPage() {
           </div>
         </div>
       </section>
+  )
+
+  return (
+    <div className="container-wide py-8 md:py-12 space-y-10">
+      <DashboardHero
+        openTickets={openTickets}
+        nextBooking={
+          nextBooking
+            ? {
+                facility: nextBooking.facility_name,
+                whenLabel: `on ${new Date(nextBooking.start_time).toLocaleDateString('en-SG', { weekday: 'long' })} at ${formatTime(nextBooking.start_time)}`,
+              }
+            : undefined
+        }
+        nextEvent={
+          nextEvent
+            ? {
+                title: nextEvent.title,
+                whenLabel: formatDate(nextEvent.start_time, { weekday: 'long', day: 'numeric', month: 'short' }),
+              }
+            : undefined
+        }
+      />
+
+      <AlertBanner
+        title="Bimonthly aircon servicing due"
+        body={`Block ${mockUser.block} servicing runs 20 to 24 July. Pick your preferred slot before Thursday.`}
+        ctaLabel="Pick a slot"
+        ctaHref="/maintenance/new"
+      />
+
+      <CustomizableDashboard
+        sections={{
+          events: <EventsHero events={upcomingEvents} />,
+          stats: statsSection,
+          actions: actionsSection,
+          today: todaySection,
+        }}
+      />
     </div>
   )
 }

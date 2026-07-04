@@ -1,21 +1,15 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { mockMachines, mockMyActiveSession } from '@/lib/data/mock-laundry'
+import { useNow } from '@/lib/hooks/use-now'
 import { ArrowRight, WashingMachine } from 'lucide-react'
 
-function useNow(intervalMs: number = 15_000) {
-  const [now, setNow] = useState<number>(() => Date.now())
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), intervalMs)
-    return () => clearInterval(id)
-  }, [intervalMs])
-  return now
-}
-
 export default function LaundryPulse() {
-  const now = useNow(15_000)
+  // null during SSR/hydration so server and client markup match; time-based
+  // details fill in after mount.
+  const now = useNow()
 
   const summary = useMemo(() => {
     let free = 0
@@ -27,8 +21,8 @@ export default function LaundryPulse() {
         free++
         continue
       }
-      if (m.status === 'running' && m.cycle_ends_at) {
-        const remaining = Math.max(0, (new Date(m.cycle_ends_at).getTime() - now) / 60_000)
+      if (now !== null && m.status === 'running' && m.cycle_ends_at) {
+        const remaining = Math.max(0, (new Date(m.cycle_ends_at).getTime() - now.getTime()) / 60_000)
         if (remaining <= 0) {
           free++
         } else {
